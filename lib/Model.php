@@ -745,8 +745,9 @@ class Model
 	public static function table()
 	{
 		$t = Table::load(get_called_class());
-		if(!empty(self::$soft_delete_key)){
-			$t->soft_delete_key = self::$soft_delete_key;
+		$called_class = get_called_class();
+		if(!empty($called_class::$soft_delete_key)){
+			$t->soft_delete_key = $called_class::$soft_delete_key;
 		}
 		return $t;
 	}
@@ -1008,7 +1009,16 @@ class Model
 		if (!$this->invoke_callback('before_destroy',false))
 			return false;
 
-		static::table()->delete($pk);
+		$called_class = get_called_class();
+		if(!empty($called_class::$soft_delete_key)){
+			$soft_delete_key = $called_class::$soft_delete_key;
+			$this->$soft_delete_key = 0;
+			$dirty = $this->dirty_attributes();
+			static::table()->update($dirty,$pk);
+		} else {
+			static::table()->delete($pk);
+		}
+		
 		$this->invoke_callback('after_destroy',false);
 
 		return true;
