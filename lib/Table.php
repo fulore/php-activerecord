@@ -52,7 +52,7 @@ class Table
 	 */
 	private $relationships = array();
 
-	public static $soft_delete_key = '';
+	public $soft_delete_key = '';
 
 	public static function load($model_class_name)
 	{
@@ -175,9 +175,9 @@ class Table
 				if (is_string($options['conditions']))
 					$options['conditions'] = array($options['conditions']);
 
-				if(!empty(self::$soft_delete_key)){
-					if( !array_key_exists(self::$soft_delete_key, $options['conditions']) ){
-						$options['conditions']['active'] = 1;
+				if(!empty($this->soft_delete_key)){
+					if( !array_key_exists($this->soft_delete_key, $options['conditions']) ){
+						$options['conditions'][$this->soft_delete_key] = 1;
 					}
 				}
 				
@@ -188,9 +188,9 @@ class Table
 				if (!empty($options['mapped_names']))
 					$options['conditions'] = $this->map_names($options['conditions'],$options['mapped_names']);
 
-				if(!empty(self::$soft_delete_key)){
-					if( !array_key_exists(self::$soft_delete_key, $options['conditions']) ){
-						$options['conditions']['active'] = 1;
+				if(!empty($this->soft_delete_key)){
+					if( !array_key_exists($this->soft_delete_key, $options['conditions']) ){
+						$options['conditions'][$this->soft_delete_key] = 1;
 					}
 				}
 
@@ -359,8 +359,11 @@ class Table
 		$data = $this->process_data($data);
 
 		$sql = new SQLBuilder($this->conn,$this->get_fully_qualified_table_name());
-		$sql->delete($data);
-
+		if(!empty($this->soft_delete_key)){
+			$sql->update($data);
+		} else {
+			$sql->delete($data);
+		}
 		$values = $sql->bind_values();
 		return $this->conn->query(($this->last_sql = $sql->to_s()),$values);
 	}

@@ -230,6 +230,9 @@ class Model
 	 */
 	static $delegate = array();
 
+	// 論理削除用カラム名
+	public static $soft_delete_key = '';
+
 	/**
 	 * Constructs a model.
 	 *
@@ -741,7 +744,11 @@ class Model
 	 */
 	public static function table()
 	{
-		return Table::load(get_called_class());
+		$t = Table::load(get_called_class());
+		if(!empty(self::$soft_delete_key)){
+			$t->soft_delete_key = self::$soft_delete_key;
+		}
+		return $t;
 	}
 
 	/**
