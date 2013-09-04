@@ -168,8 +168,6 @@ class Table
 
 		if (array_key_exists('conditions',$options))
 		{
-			
-
 			if (!is_hash($options['conditions']))
 			{
 				if (is_string($options['conditions']))
@@ -177,7 +175,7 @@ class Table
 
 				if(!empty($this->soft_delete_key)){
 					if( !array_key_exists($this->soft_delete_key, $options['conditions']) ){
-						$options['conditions'][$this->soft_delete_key] = 1;
+						$options['conditions'][$this->soft_delete_key] = '1';
 					}
 				}
 				
@@ -190,12 +188,18 @@ class Table
 
 				if(!empty($this->soft_delete_key)){
 					if( !array_key_exists($this->soft_delete_key, $options['conditions']) ){
-						$options['conditions'][$this->soft_delete_key] = 1;
+						$options['conditions'][$this->soft_delete_key] = '1';
 					}
 				}
 
 				$sql->where($options['conditions']);
 			}
+		} else {
+			if(!empty($this->soft_delete_key)){
+				$options['conditions'] = array();
+				$options['conditions'][$this->soft_delete_key] = '1';
+			}
+			$sql->where($options['conditions']);
 		}
 
 		if (array_key_exists('order',$options))
