@@ -52,6 +52,8 @@ class Table
 	 */
 	private $relationships = array();
 
+	public static $soft_delete_key = '';
+
 	public static function load($model_class_name)
 	{
 		if (!isset(self::$cache[$model_class_name]))
@@ -166,14 +168,19 @@ class Table
 
 		if (array_key_exists('conditions',$options))
 		{
+			
+
 			if (!is_hash($options['conditions']))
 			{
 				if (is_string($options['conditions']))
 					$options['conditions'] = array($options['conditions']);
 
-				if( !array_key_exists($options['conditions'],'active') ){
-					$options['conditions']['active'] = 1;
+				if(!empty(self::$soft_delete_key)){
+					if( !array_key_exists(self::$soft_delete_key, $options['conditions']) ){
+						$options['conditions']['active'] = 1;
+					}
 				}
+				
 				call_user_func_array(array($sql,'where'),$options['conditions']);
 			}
 			else
@@ -181,9 +188,12 @@ class Table
 				if (!empty($options['mapped_names']))
 					$options['conditions'] = $this->map_names($options['conditions'],$options['mapped_names']);
 
-				if( !array_key_exists($options['conditions'],'active') ){
-					$options['conditions']['active'] = 1;
+				if(!empty(self::$soft_delete_key)){
+					if( !array_key_exists(self::$soft_delete_key, $options['conditions']) ){
+						$options['conditions']['active'] = 1;
+					}
 				}
+
 				$sql->where($options['conditions']);
 			}
 		}
