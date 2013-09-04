@@ -171,6 +171,9 @@ class Table
 				if (is_string($options['conditions']))
 					$options['conditions'] = array($options['conditions']);
 
+				if( !array_key_exists($options['conditions'],'active') ){
+					$options['conditions']['active'] = 1;
+				}
 				call_user_func_array(array($sql,'where'),$options['conditions']);
 			}
 			else
@@ -178,6 +181,9 @@ class Table
 				if (!empty($options['mapped_names']))
 					$options['conditions'] = $this->map_names($options['conditions'],$options['mapped_names']);
 
+				if( !array_key_exists($options['conditions'],'active') ){
+					$options['conditions']['active'] = 1;
+				}
 				$sql->where($options['conditions']);
 			}
 		}
