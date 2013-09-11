@@ -175,7 +175,7 @@ class Table
 
 				if(!empty($this->soft_delete_key)){
 					if( !mb_ereg('active',$options['conditions'][0]) ){
-						$options['conditions'][0] += " active = ? ";
+						$options['conditions'][0] = $options['conditions'][0] . " and `active` = ? ";
 						$options['conditions'][] = '1';
 					}
 				}
