@@ -164,3 +164,18 @@ $post->delete();
 # DELETE FROM `posts` WHERE id=1
 echo $post->title; # 'New real title'
 ```
+
+### Soft Deletion ###
+論理削除機能です。
+テーブル側に、“0”か“1”の値をとるカラムを追加して、
+そのカラム名を静的クラス変数に設定する。
+
+find,update,deleteメソッドは、activeが“1”のデータを抽出する。
+
+update_all,delete_allは、activeカラムは無視する。
+
+```php
+class OUModel extends ActiveRecord\Model {
+	public static $soft_delete_key = 'active';
+}
+```
