@@ -175,7 +175,11 @@ class Table
 
 				if(!empty($this->soft_delete_key)){
 					if( !array_key_exists($this->soft_delete_key, $options['conditions']) ){
-						$options['conditions'][$this->soft_delete_key] = '1';
+						[$this->soft_delete_key] = '1';
+						if( !mb_ereg('active',$options['conditions'][0]) ){
+							$options['conditions'][0] += " active = ? ";
+							$options['conditions'][] = '1';
+						}
 					}
 				}
 				
